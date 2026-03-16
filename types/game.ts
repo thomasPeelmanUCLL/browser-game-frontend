@@ -10,7 +10,7 @@ export interface Resource {
   type: ResourceType;
   position: Position;
   amount: number;
-  hexId?: string; // H3 cell ID at resolution 9
+  hexId?: string;
   respawnAt?: string;
 }
 
@@ -26,9 +26,25 @@ export interface InventoryItem {
   amount: number;
 }
 
+export interface HexCell {
+  hexId: string;
+  ownerId: string | null;
+  owner?: { id: string; username: string } | null;
+  level: number;
+  bonusMultiplier: number;
+  claimedAt: string;
+}
+
 export type WSMessage =
   | { type: 'PLAYER_MOVE'; position: Position }
   | { type: 'COLLECT_RESOURCE'; resourceId: string }
+  | { type: 'CLAIM_HEX'; hexId: string; playerId: string }
+  | { type: 'UPGRADE_HEX'; hexId: string; playerId: string }
   | { type: 'RESOURCES_UPDATE'; resources: Resource[] }
+  | { type: 'HEXES_UPDATE'; hexes: HexCell[] }
+  | { type: 'HEX_CLAIMED'; hex: HexCell }
+  | { type: 'HEX_UPGRADED'; hex: HexCell }
   | { type: 'COLLECT_SUCCESS'; resourceId: string; item: InventoryItem }
-  | { type: 'COLLECT_FAIL'; reason: string };
+  | { type: 'COLLECT_FAIL'; reason: string }
+  | { type: 'CLAIM_HEX_RESULT'; success: boolean; reason?: string; hex?: HexCell }
+  | { type: 'UPGRADE_HEX_RESULT'; success: boolean; reason?: string; hex?: HexCell };

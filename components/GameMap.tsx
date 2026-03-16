@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Position, Resource } from '@/types/game';
+import { Position, Resource, HexCell } from '@/types/game';
 import ResourceMarker from './ResourceMarker';
 import HexGrid from './HexGrid';
 
@@ -23,10 +23,13 @@ function RecenterMap({ position }: { position: Position }) {
 interface GameMapProps {
   playerPosition: Position;
   resources: Resource[];
+  claimedHexes: HexCell[];
+  currentPlayerId?: string;
   onCollect: (resourceId: string) => void;
+  onHexClick: (hexId: string, isOwned: boolean, isMine: boolean) => void;
 }
 
-export default function GameMap({ playerPosition, resources, onCollect }: GameMapProps) {
+export default function GameMap({ playerPosition, resources, claimedHexes, currentPlayerId, onCollect, onHexClick }: GameMapProps) {
   return (
     <MapContainer
       center={[playerPosition.lat, playerPosition.lng]}
@@ -38,16 +41,15 @@ export default function GameMap({ playerPosition, resources, onCollect }: GameMa
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       <RecenterMap position={playerPosition} />
-      {/* Hex grid overlay — rendered before markers so markers appear on top */}
       <HexGrid
         resources={resources}
-        onHexClick={(hexId) => console.log('Clicked hex:', hexId)}
+        claimedHexes={claimedHexes}
+        currentPlayerId={currentPlayerId}
+        onHexClick={onHexClick}
       />
-      {/* Player marker */}
       <Marker position={[playerPosition.lat, playerPosition.lng]}>
         <Popup>You are here</Popup>
       </Marker>
-      {/* Resource markers */}
       {resources.map((r) => (
         <ResourceMarker key={r.id} resource={r} onCollect={onCollect} />
       ))}
