@@ -10,7 +10,8 @@ export interface Resource {
   type: ResourceType;
   position: Position;
   amount: number;
-  respawnAt?: string; // ISO timestamp
+  hexId?: string; // H3 cell ID at resolution 9
+  respawnAt?: string;
 }
 
 export interface Player {

@@ -5,8 +5,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Position, Resource } from '@/types/game';
 import ResourceMarker from './ResourceMarker';
+import HexGrid from './HexGrid';
 
-// Fix default Leaflet icon paths with Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: '/leaflet/marker-icon-2x.png',
@@ -38,6 +38,11 @@ export default function GameMap({ playerPosition, resources, onCollect }: GameMa
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       <RecenterMap position={playerPosition} />
+      {/* Hex grid overlay — rendered before markers so markers appear on top */}
+      <HexGrid
+        resources={resources}
+        onHexClick={(hexId) => console.log('Clicked hex:', hexId)}
+      />
       {/* Player marker */}
       <Marker position={[playerPosition.lat, playerPosition.lng]}>
         <Popup>You are here</Popup>
